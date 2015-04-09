@@ -7,7 +7,7 @@ def read(fname):
 setup(
   name = 'CryptographyKit',
   packages = ['Cryptokit', 'Cryptokit/helper_files'],
-  version = '1.0.0',
+  version = '1.0.5',
   author = 'Marc Santiago',
   author_email = 'marcanthonysanti@gmail.com',
   url = 'https://github.com/marcsantiago/Cryptokit', 

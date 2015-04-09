@@ -1,19 +1,34 @@
 #!/usr/bin/env python
 from __future__ import division, absolute_import, print_function, unicode_literals
 __author__ = 'marcsantiago'
-# This function was designed to apply a one time pad encryption
-# on textual data that either comes from a file or that is entered
-# manually by the user.  Note, the suffix of the key file and the suffix
-# of the encrypted message file will be the same.  This allows
-# users to associate key files with their corresponding
-# encrypted text files.
+"""This function was designed to apply a one time pad encryption
+on textual data that either comes from a file or that is entered
+manually by the user.  Note, the suffix of the key file and the suffix
+of the encrypted message file will be the same.  This allows
+users to associate key files with their corresponding
+encrypted text files."""
 from random import choice
 from binascii import hexlify, unhexlify
 from sys import exit, stdout, version_info
 from os import remove
 from zipfile import ZipFile
 from datetime import datetime
-from string import ascii_letters
+
+try:
+    from pyminizip import compress
+except ImportError:
+    print("This module requires the pyminizip module.")
+    print("To install the pyminizip module on unix or linux,")
+    print("type [pip install pyminizip] terminal.")
+    print("If using python3 please use [pip3 install pyminizip].")
+
+try:
+    from bitarray import bitarray
+except ImportError:
+    print("This module requires the bitarray module.")
+    print("To install the bitarray module on unix or linux,")
+    print("type [pip install bitarray] terminal.")
+    print("If using python3 please use [pip3 install bitarray].")
 
 try:
     from future_builtins import *
@@ -25,14 +40,6 @@ try:
     range = xrange
 except NameError:
     pass
-
-try:
-    from pyminizip import compress
-except ImportError:
-    print("This module requires the pyminizip module.")
-    print("To install the pyminizip module on unix or linux,")
-    print("type [pip install pyminizip] terminal.")
-    print("If using python3 please use [pip3 install pyminizip].")
 
 
 def _string_converter(text_data):
@@ -49,14 +56,13 @@ def _key_generator(standard_string_length, time):
     print("Generating Key Please Wait...This may take a while depending on the length of data entered.")
     filename = "_".join(["key", time])
     string_length = len(standard_string_length)
-    key_list = []
-    key_values = ascii_letters()
+    key_list = bitarray()
     for i in range(string_length):
-        key_list.append(choice(key_values))
+        key_list.append(choice([True, False]))
 
     with open(filename + ".dat", 'w') as data:
-        data.write("".join(key_list))
-    return _string_converter("".join(key_list))
+        data.write("".join(str(byte) for byte in key_list))
+    return _string_converter("".join(str(byte) for byte in key_list))
                 
 def _encrypt_key_file(zip_password, time):
     """Encrypts the key.dat file with a zip encryption using pyminizip.
@@ -87,14 +93,13 @@ def decrypt_data(key, encrypted_string, key_file_mode=False, string_file_mode=Fa
             zf = ZipFile(key)
             try:
                 if zf.testzip() == None:
-                    print("Key.zip is in the wrong format, by does not have a key.")
                     ZipFile(key).extractall()
-                    print("Successfully extracted, please use the key.dat file as your key and try again.\n")
+                    print("Successfully extracted, please use the key file with the .dat extension file as your key and try again.\n")
                     exit(0)
             except:
                 print("Key.zip is encrypted!\n")
                 _unzip_file(key, input("Please enter the password to unzip the key file and try again.\n"))
-                exit(0)
+                
         else:
             my_key = key
             with open(my_key, 'r') as key_data:
@@ -102,7 +107,7 @@ def decrypt_data(key, encrypted_string, key_file_mode=False, string_file_mode=Fa
     else:
         my_key = key
 
-    if encrypted_string_file_mode:
+    if string_file_mode:
         my_string = encrypted_string
         with open(my_string, 'r') as string_data:
             my_string = string_data.read()
@@ -125,7 +130,7 @@ def decrypt_data(key, encrypted_string, key_file_mode=False, string_file_mode=Fa
         decrypt_list.append(int(my_string_num_list[j]) ^ int(my_key_num_list[j]))
     
     print()
-    decrypt_list = [str(i) for i in decrypt_list]
+    decrypt_list = (str(i) for i in decrypt_list)
     add_binary = "0b" + "".join(decrypt_list)
     decrypted_string = int(add_binary, 2)
 
@@ -170,7 +175,7 @@ def encrypt_data(plain_text, string_file_mode=False):
         encrypted_list.append(int(string_list[j]) ^ int(key_list[j]))     
     
     print()
-    encrypted_list = [str(i) for i in encrypted_list]
+    encrypted_list = (str(i) for i in encrypted_list)
     encrypted_data = "0b" + "".join(encrypted_list)
 
     with open(filename + ".txt", 'w') as message:
@@ -179,3 +184,10 @@ def encrypt_data(plain_text, string_file_mode=False):
     _encrypt_key_file(input("Please type in a password to zip and encrypt the key.dat file\n"), timestamp)
     print("Encryption Complete.")
     return encrypted_data
+
+def main():
+    #decrypt_data("key_150408_213514.dat", "encrypted_message_150408_213514.txt", key_file_mode=True, string_file_mode=True)
+    #encrypt_data("hello" * 10000)
+
+if __name__ in "__main__":
+    main()
