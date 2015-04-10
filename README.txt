@@ -30,7 +30,7 @@ Description of Methods:
 -------------------------------------------------
 -------------------------------------------------
 
-Module --> OneTimePadEncryption
+Module --> OneTimePadEncryption !!! UNDER CONSTRUCTION FIXING BUGS, DO NOT USE
 -------------------------------
 
 encrypt_data(plain_text, string_file_mode=False) --> Takes plain text as either a string
