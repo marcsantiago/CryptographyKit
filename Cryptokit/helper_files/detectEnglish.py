@@ -45321,12 +45321,13 @@ def getEnglishCount(message):
     possibleWords = message.split()
 
     if possibleWords == []:
-        return 0.0 # no words at all, so return 0.0
+        return 0.0 \
 
     matches = 0
     for word in possibleWords:
         if word in ENGLISH_WORDS:
             matches += 1
+
     return float(matches) / len(possibleWords)
 
 
@@ -45335,15 +45336,17 @@ def removeNonLetters(message):
     for symbol in message:
         if symbol in LETTERS_AND_SPACE:
             lettersOnly.append(symbol)
+
     return ''.join(lettersOnly)
 
 
 def isEnglish(message, word_percentage=20, letter_percentage=85):
-    # By default, 20% of the words must exist in the dictionary file, and
-    # 85% of all the characters in the message must be letters or spaces
-    # (not punctuation or numbers).
+    """By default, 20% of the words must exist in the dictionary file, and
+       85% of all the characters in the message must be letters or spaces
+       (not punctuation or numbers)."""
     wordsMatch = getEnglishCount(message) * 100 >= word_percentage
     numLetters = len(removeNonLetters(message))
     messageLettersPercentage = float(numLetters) / len(message) * 100
     lettersMatch = messageLettersPercentage >= letter_percentage
+    
     return wordsMatch and lettersMatch

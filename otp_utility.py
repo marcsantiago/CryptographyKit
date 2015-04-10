@@ -4,8 +4,6 @@ import argparse
 
 from Cryptokit.OneTimePadEncryption import encrypt_data, decrypt_data
 
-
-
 parser = argparse.ArgumentParser(description='One Time Pad Encryption Command Line Utility')
 parser.add_argument('-e', '--encrypt_string', help='Encrypts a string that the user has entered')
 parser.add_argument('-d', '--decrypt_string', help='Decrypts a string. User must also key provided a key')
@@ -23,16 +21,17 @@ elif args['encrypt_file']:
   encrypt_data(args['encrypt_file'], string_file_mode=True)
 
 elif args['decrypt_string'] and args['key_file']:
-  decrypt_data(args['key_file'], args['decrypt_string'], key_file_mode=True, encrypted_string_file_mode=False)
+  decrypt_data(args['decrypt_string'], args['key_file'], encrypted_string_file_mode=False, key_file_mode=True)
 
 elif args['decrypt_string'] and args['key']:
-  decrypt_data(args['key'], args['decrypt_string'], key_file_mode=False, encrypted_string_file_mode=False)
+  decrypt_data(args['decrypt_string'], args['key_file'], encrypted_string_file_mode=False, key_file_mode=False)
 
 elif args['decrypt_file'] and args['key_file']:
-  decrypt_data(args['key_file'], args['decrypt_file'], key_file_mode=True, encrypted_string_file_mode=True)
+  decrypt_data(args['decrypt_string'], args['key_file'], encrypted_string_file_mode=True, key_file_mode=True)
 
 elif args['decrypt_file'] and args['key']:
-  decrypt_data(args['key'], args['decrypt_file'], key_file_mode=False, encrypted_string_file_mode=True)
+  decrypt_data(args['decrypt_string'], args['key_file'], encrypted_string_file_mode=False, key_file_mode=False)
+
 else:
     print("""
   -h, --help            show this help message and exit
@@ -49,5 +48,3 @@ else:
                         Decrypts data from file. key can be from file or
                         string.
 """)
-
-

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
-# This class is designed to provide users with a simple Caesar Cipher Module.
+"""This class is designed to provide users with a simple Caesar Cipher Module."""
 from __future__ import division, absolute_import, print_function, unicode_literals
-
 __author__ = 'marcsantiago'
 
 from helper_files import detectEnglish

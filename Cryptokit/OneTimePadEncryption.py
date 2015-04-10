@@ -13,6 +13,8 @@ from sys import exit, stdout, version_info
 from os import remove
 from zipfile import ZipFile
 from datetime import datetime
+from struct import unpack
+from string import ascii_letters
 
 try:
     from pyminizip import compress
@@ -21,14 +23,6 @@ except ImportError:
     print("To install the pyminizip module on unix or linux,")
     print("type [pip install pyminizip] terminal.")
     print("If using python3 please use [pip3 install pyminizip].")
-
-try:
-    from bitarray import bitarray
-except ImportError:
-    print("This module requires the bitarray module.")
-    print("To install the bitarray module on unix or linux,")
-    print("type [pip install bitarray] terminal.")
-    print("If using python3 please use [pip3 install bitarray].")
 
 try:
     from future_builtins import *
@@ -41,7 +35,6 @@ try:
 except NameError:
     pass
 
-
 def _string_converter(text_data):
     """Takes a given string or file and converts it to binary."""
     if version_info >= (3, 0):
@@ -49,31 +42,31 @@ def _string_converter(text_data):
     else:
         return bin(int(hexlify(text_data), 16))
 
-def _key_generator(standard_string_length, time):
+def _key_generator(time):
     """Generates a random list that is equal to
     the length of the provided string."""
-
-    print("Generating Key Please Wait...This may take a while depending on the length of data entered.")
+    print("Generating Key Please Wait...")
     filename = "_".join(["key", time])
-    string_length = len(standard_string_length)
-    key_list = bitarray()
-    for i in range(string_length):
-        key_list.append(choice([True, False]))
+    key_list = [] 
+    for i in range(32):
+        key_list.append(choice(ascii_letters))
 
     with open(filename + ".dat", 'w') as data:
-        data.write("".join(str(byte) for byte in key_list))
-    return _string_converter("".join(str(byte) for byte in key_list))
+        data.write("".join(key_list))
+    return _string_converter("".join(key_list))
                 
 def _encrypt_key_file(zip_password, time):
     """Encrypts the key.dat file with a zip encryption using pyminizip.
     For more instructions regarding pyminizip you can visit pypi.python.org
     and search for the module or google it."""
+    
     filename = "_".join(["key", time])
     compress(filename + ".dat", filename + ".zip", zip_password, int(9))
     remove(filename + ".dat")
 
 def _unzip_file(zip_file, zip_password):
     """Unzips key.zip file using a supplied password."""
+    
     if version_info >= (3, 0):
         ZipFile(zip_file).extractall(pwd=str.encode(zip_password))
         print("File unzipped.")
@@ -81,11 +74,12 @@ def _unzip_file(zip_file, zip_password):
         ZipFile(zip_file).extractall(pwd=zip_password)
         print("File unzipped.")
 
-def decrypt_data(key, encrypted_string, key_file_mode=False, string_file_mode=False):
+def decrypt_data(encrypted_string, key, string_file_mode=False, key_file_mode=False):
     """Method that takes either the key or the encrypted string as a
     string or can the key and encrypted string a as file and decrypts
     the string using the provided string. NOTE** In order to use the the key.dat file
     you must first also be able to unzip it using a password."""
+    
     print("Starting Decryption...")
     
     if key_file_mode:
@@ -94,7 +88,8 @@ def decrypt_data(key, encrypted_string, key_file_mode=False, string_file_mode=Fa
             try:
                 if zf.testzip() == None:
                     ZipFile(key).extractall()
-                    print("Successfully extracted, please use the key file with the .dat extension file as your key and try again.\n")
+                    print("Successfully extracted, please use the key file \
+                        with the .dat extension file as your key and try again.\n")
                     exit(0)
             except:
                 print("Key.zip is encrypted!\n")
@@ -115,24 +110,15 @@ def decrypt_data(key, encrypted_string, key_file_mode=False, string_file_mode=Fa
         my_string = encrypted_string
 
     my_string_num_list = my_string
-    my_key_num_list = _string_converter(my_key)
+    my_key_num_list = _string_converter(my_key)[2:]
 
+    print("Decrypting file...please wait, this may take a while depending on file size")
     decrypt_list = []
-    count = 2
-    bar_length = 20
     for j in range(2, len(my_string_num_list)):
-        count += 1
-        percent = float(count) / len(my_key_num_list)
-        hashes = "#" * int(round(percent * bar_length))
-        spaces = " " * (bar_length - len(hashes))
-        stdout.write("\rPercent: [{0}] {1}%".format(hashes + spaces, int(round(percent * 100))))
-        stdout.flush()
-        decrypt_list.append(int(my_string_num_list[j]) ^ int(my_key_num_list[j]))
-    
-    print()
-    decrypt_list = (str(i) for i in decrypt_list)
-    add_binary = "0b" + "".join(decrypt_list)
-    decrypted_string = int(add_binary, 2)
+        index = j % len(my_key_num_list)
+        decrypt_list.append(int(my_string_num_list[j]) ^ int(my_key_num_list[index]))
+
+    decrypted_string = int("0b" + "".join((str(i) for i in decrypt_list)), 2)
 
     if version_info >= (3, 0):
         message =  decrypted_string.to_bytes((decrypted_string.bit_length() + 7) // 8, 'big').decode()
@@ -147,6 +133,7 @@ def decrypt_data(key, encrypted_string, key_file_mode=False, string_file_mode=Fa
 def encrypt_data(plain_text, string_file_mode=False):
     """Method that takes either the key or plaintext as a
     string or file. The key is randomly generated for you!"""
+    
     print("Starting Encryption...")
     
     timestamp = str(datetime.now().strftime("%y%m%d_%H%M%S"))
@@ -156,38 +143,23 @@ def encrypt_data(plain_text, string_file_mode=False):
         with open(plain_text) as plaintext_data:
             file_data = str(plaintext_data.read())
             string_list = _string_converter(file_data)
-            key_list = _key_generator(file_data, timestamp)
-    
+            key_list = _key_generator(timestamp)[2:]
+
     else:
         string_list = _string_converter(plain_text)
-        key_list = _key_generator(plain_text, timestamp)
+        key_list = _key_generator(timestamp)[2:]
+        key_list = key_list[2:]
 
+    print("Encrypting file...please wait, this may take a while depending on file size")
     encrypted_list = []
-    count = 2
-    bar_length = 20
     for j in range(2, len(string_list)):
-        count += 1
-        percent = float(count) / len(string_list)
-        hashes = "#" * int(round(percent * bar_length))
-        spaces = " " * (bar_length - len(hashes))
-        stdout.write("\rPercent: [{0}] {1}%".format(hashes + spaces, int(round(percent * 100))))
-        stdout.flush()
-        encrypted_list.append(int(string_list[j]) ^ int(key_list[j]))     
-    
-    print()
-    encrypted_list = (str(i) for i in encrypted_list)
-    encrypted_data = "0b" + "".join(encrypted_list)
+        index = j % len(key_list)
+        encrypted_list.append(int(string_list[j]) ^ int(key_list[index]))   
 
     with open(filename + ".txt", 'w') as message:
-        message.write(encrypted_data)
+        message.write( "0b" + "".join((str(i) for i in encrypted_list)))
 
     _encrypt_key_file(input("Please type in a password to zip and encrypt the key.dat file\n"), timestamp)
     print("Encryption Complete.")
-    return encrypted_data
 
-def main():
-    #decrypt_data("key_150408_213514.dat", "encrypted_message_150408_213514.txt", key_file_mode=True, string_file_mode=True)
-    #encrypt_data("hello" * 10000)
-
-if __name__ in "__main__":
-    main()
+    return "0b" + "".join((str(i) for i in encrypted_list))

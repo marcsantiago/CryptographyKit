@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 from __future__ import division, absolute_import, print_function, unicode_literals
 __author__ = 'marcsantiago'
-# This function is provides an easy way to cipher and decipher messages using a vigenere cipher.
-# Provided in this module is also a means to decrypt a ciphered messsage using a dictionary attack.
+"""This function is provides an easy way to cipher and decipher messages using a vigenere cipher.
+Provided in this module is also a means to decrypt a ciphered messsage using a dictionary attack."""
 from string import ascii_uppercase, ascii_lowercase 
 from helper_files.detectEnglish import isEnglish
 from itertools import izip
