@@ -42,6 +42,15 @@ def _string_converter(text_data):
     else:
         return bin(int(hexlify(text_data), 16))
 
+def _read_in_chunks(file_object, chunk_size=1024):
+    """Lazy function (generator) to read a file piece by piece.
+    Default chunk size: 1k."""
+    while True:
+        data = file_object.read(chunk_size)
+        if not data:
+            break
+        yield data
+
 def _key_generator(time):
     """Generates a random list that is equal to
     the length of the provided string."""
@@ -112,7 +121,7 @@ def decrypt_data(encrypted_string, key, string_file_mode=False, key_file_mode=Fa
     my_string_num_list = my_string
     my_key_num_list = _string_converter(my_key)[2:]
 
-    print("Decrypting file...please wait, this may take a while depending on file size")
+    print("Decrypting file...please wait, this may take a while depending on file size.")
     decrypt_list = []
     for j in range(2, len(my_string_num_list)):
         index = j % len(my_key_num_list)
@@ -143,14 +152,12 @@ def encrypt_data(plain_text, string_file_mode=False):
         with open(plain_text) as plaintext_data:
             file_data = str(plaintext_data.read())
             string_list = _string_converter(file_data)
-            key_list = _key_generator(timestamp)[2:]
-
     else:
         string_list = _string_converter(plain_text)
-        key_list = _key_generator(timestamp)[2:]
-        key_list = key_list[2:]
+    
+    key_list = _key_generator(timestamp)[2:]
 
-    print("Encrypting file...please wait, this may take a while depending on file size")
+    print("Encrypting file...please wait, this may take a while depending on file size.")
     encrypted_list = []
     for j in range(2, len(string_list)):
         index = j % len(key_list)
@@ -159,7 +166,14 @@ def encrypt_data(plain_text, string_file_mode=False):
     with open(filename + ".txt", 'w') as message:
         message.write( "0b" + "".join((str(i) for i in encrypted_list)))
 
-    _encrypt_key_file(input("Please type in a password to zip and encrypt the key.dat file\n"), timestamp)
+    #_encrypt_key_file(input("Please type in a password to zip and encrypt the key.dat file.\n"), timestamp)
     print("Encryption Complete.")
 
     return "0b" + "".join((str(i) for i in encrypted_list))
+
+def main():
+    #encrypt_data("test.txt", string_file_mode=True)
+    decrypt_data("encrypted_message_150412_105314.txt", "key_150412_105314.dat", string_file_mode=True, key_file_mode=True)
+
+main()
+

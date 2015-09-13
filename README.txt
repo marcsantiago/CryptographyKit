@@ -9,7 +9,7 @@ USAGE:
 External Modules Required
 -------------------------------------------------
 -------------------------------------------------
-pyminizip, and PIL
+pyminizip, PIL, and easygui
 All these modules can be installed via the pip command
 
 [pip install pyminizip] or [pip3 install pyminizip]
@@ -30,7 +30,7 @@ Description of Methods:
 -------------------------------------------------
 -------------------------------------------------
 
-Module --> OneTimePadEncryption !!! UNDER CONSTRUCTION FIXING BUGS, DO NOT USE
+Module --> OneTimePadEncryption
 -------------------------------
 
 encrypt_data(plain_text, string_file_mode=False) --> Takes plain text as either a string
