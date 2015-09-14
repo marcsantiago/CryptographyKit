@@ -10,11 +10,11 @@ setup(
   version = '2.0.1',
   author = 'Marc Santiago',
   author_email = 'marcanthonysanti@gmail.com',
-  url = 'https://github.com/marcsantiago/Cryptokit', 
-  download_url = 'https://github.com/marcsantiago/Cryptokit/archive/master.zip', 
-  keywords = ['Crytography', 'One Time Pad Encryption, Ceaser Cipher', 'vigenere cipher'],
-  description = 'This package is intended to provided users with a quick and simple ways to perform\
-  a one time pad encryption, ceaser cipher, or vigenere cipher.  It will work with python 2 or 3.', 
+  url = 'https://github.com/marcsantiago/CryptographyKit', 
+  download_url = 'https://github.com/marcsantiago/CryptographyKit/archive/master.zip', 
+  keywords = ['Cryptography', 'One Time Pad Encryption, Caeser Cipher', 'Vigenere cipher'],
+  description = 'This package is intended to provided users with a quick and simple way to perform\
+  a one time pad encryption, Caeser cipher, or Vigenere cipher.  It will work with python 2 or 3.', 
   long_description=read('README.txt'),
   classifiers = [],
 )
