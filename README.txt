@@ -1,9 +1,9 @@
 AUTHOR: Marc Santiago 
 EMAIL: marcanthonysanti@gmail.com 
 
-This kit is intended to provided users with a quick and simple forms of encrypts.  Some modules like
+This kit is intended to provided users with quick and simple forms of encryptions.  Some modules like
 HideMessageInImage and CaesarCipher, while not very strong forms of encryption are provided for the
-sake of having them easily available.
+sake of having them easily available and for fun :-).
 
 USAGE:
 External Modules Required
