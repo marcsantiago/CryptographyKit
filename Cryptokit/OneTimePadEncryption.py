@@ -175,5 +175,6 @@ def main():
     #encrypt_data("test.txt", string_file_mode=True)
     decrypt_data("encrypted_message_150412_105314.txt", "key_150412_105314.dat", string_file_mode=True, key_file_mode=True)
 
-main()
+if __name__ in '__main__':
+    main()
 
